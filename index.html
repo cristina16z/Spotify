@@ -3,11 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style/style.css">
     <title>Spoptify</title>
 </head>
 <body>
     <h1>Buscar cançons</h1>
+    <input id="inputSong" class="input" type="text" placeholder="Escriu el nom de la cançó">
+    <button id="buscar"class="bttn" disabled>Buscar</button>
+    <button id="eliminar"class="bttn" disabled>Borrar</button>
+
+    <div class="main">
+        <div class="songs">
+            <div class="results">Fes una nova búsqueda</div>
+        </div>
+
+        <div class="informacio">
+            <div class="infoArtista">Informació artista</div>
+        </div>
+    </div>
     
 
     <script type="module" src="script/spotify.js"></script>

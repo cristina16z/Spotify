@@ -1,3 +1,122 @@
 body {
-    background-color: rgb(182, 230, 178);
+    background-color: rgb(212, 244, 201);
 }
+
+
+/* HEADER */
+
+.input{
+    width: 10vw;    
+    height: 2.5vh;
+    border-color: rgb(70, 198, 111);
+}
+
+
+.bttn{
+    width: 4vw;   
+    height: 2.9vh;
+    background-color: rgb(85, 124, 99);
+    color: white;
+}
+
+
+.bttn:enabled{
+    background-color: rgb(4, 124, 46);
+}
+
+
+.bttn:hover{
+    background-color: rgb(73, 126, 91);
+}
+
+
+h1{
+    color: rgb(17, 179, 74);
+}
+
+
+/* MAIN */
+
+.main{
+    display: flex;
+    margin-top: 1%;
+}
+
+.songs{
+    display: flex;
+    flex-direction: row;
+    width: 60vw;
+    height: 100vh;
+    border-color: rgb(223, 17, 44);    
+}
+
+/*PART ESQUERRA */
+.results{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1%;
+    overflow: auto;
+}
+
+.track{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    
+    border: 1px solid white;
+    padding: 1.5%;
+    width:20%;
+    height: 45%;
+    background-color: white;
+    border-radius: 3%;
+    justify-content: center;
+}
+
+.track:hover{
+    background-color: rgb(141, 224, 141);
+    border-color: black;
+}
+
+
+.track_img{
+    width: 100%;
+}
+
+.track_name{
+    display: flex;
+    justify-content: center;
+    font-weight: bold;
+    color: black;
+    font-size: 1.6em;
+}
+
+.track_artista, .track_album{
+    margin-bottom: 4%;
+    font-size: 1.2em;
+}
+
+.track_add{
+    margin-top: 4%;
+    color: white;
+    background-color: green;
+    border-radius: 8%;
+    border-color: green;
+    width: 6vw;    
+    height: 4vh;
+}
+
+.track_add:hover{
+    background-color: rgb(110, 190, 110);
+}
+
+
+
+/*PART DRETA */
+
+.informacio{
+    width: 40vw;
+    height: 100vh;
+    border-color: rgb(0, 0, 0);
+}
+
