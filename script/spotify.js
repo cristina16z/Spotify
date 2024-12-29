@@ -5,24 +5,7 @@ let llistaTracks="";
 const btnBuscar = document.querySelector("#buscar");
 const btnClear = document.querySelector("#eliminar");
 const inputSong = document.querySelector("#inputSong");
-const inputTrackObj = document.querySelector('.input')
-
 const results = document.querySelector(".results");
-
-
-// const search = function(){
-//   const value = inputTrackObj.value;
-  
-//   console.log('el valor del input és' + value);
-//   console.log(tokenAcces);
-
-//   const endpoint = "https://api.spotify.com/v1/search";
-//   const method = "GET"
-
-//   const searchUrl =`https://api.spotify.com/v1/search?q=${encodeURIComponent(value)}`;
-
-//   console.log(searchUrl);
-// }
 
 
 
@@ -55,6 +38,16 @@ const searchArtist = function(idArtist){
   buscarTopSong();
 
 }
+
+
+/* Funció botón Borrar */
+btnClear.addEventListener("click", function(){
+  results.innerHTML = "";
+  results.textContent = "Fes una nova búsqueda";
+  inputSong.value = "";
+});
+
+
 
 
 

@@ -6,7 +6,7 @@ body {
 /* HEADER */
 
 .input{
-    width: 10vw;    
+    width: 16vw;    
     height: 2.5vh;
     border-color: rgb(70, 198, 111);
 }
@@ -45,7 +45,7 @@ h1{
 .songs{
     display: flex;
     flex-direction: row;
-    width: 60vw;
+    width: 70vw;
     height: 100vh;
     border-color: rgb(223, 17, 44);    
 }
@@ -63,11 +63,13 @@ h1{
     flex-direction: column;
     align-items: center;
     text-align: center;
-    
-    border: 1px solid white;
+    justify-content: space-between;
+    margin:0;
     padding: 1.5%;
+    display: block;                                 /*quita el posible espacio superior previo a la imágen*/
     width:20%;
-    height: 45%;
+    height: auto;
+
     background-color: white;
     border-radius: 3%;
     justify-content: center;
@@ -81,6 +83,7 @@ h1{
 
 .track_img{
     width: 100%;
+    height: auto;
 }
 
 .track_name{
@@ -88,12 +91,12 @@ h1{
     justify-content: center;
     font-weight: bold;
     color: black;
-    font-size: 1.6em;
+    font-size: 1.2em;
 }
 
 .track_artista, .track_album{
     margin-bottom: 4%;
-    font-size: 1.2em;
+    font-size: .9em;
 }
 
 .track_add{
@@ -115,8 +118,30 @@ h1{
 /*PART DRETA */
 
 .informacio{
-    width: 40vw;
+    border-left: 1px solid black;
+    width: 30vw;
     height: 100vh;
     border-color: rgb(0, 0, 0);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
+
+.infoArtista{
+    display: flex;
+    justify-content: center;
+    border: 1px solid black;
+    width:90%;
+    height: 50vh; /*cambiarlo a auto*/
+    border-radius: 3%;
+}
+
+.llista_titol{
+    margin-top: 5%;
+    font-weight: bold;
+}
+
+.infoLlista{
+    margin-top: 3%;
+}
