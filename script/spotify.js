@@ -6,6 +6,7 @@ const btnBuscar = document.querySelector("#buscar");
 const btnClear = document.querySelector("#eliminar");
 const inputSong = document.querySelector("#inputSong");
 const results = document.querySelector(".results");
+const infoArtista = document.querySelector(".infoArtista");
 
 
 let resultadosCargados = 0;
@@ -46,7 +47,7 @@ const renderitzarTracks = function(llistaTracks, total){
   }
 
   
-  resultadosCargados = rangSongs;                               //Actualizamos las canciones cargadas
+  resultadosCargados = rangSongs;                                 //Actualizamos las canciones cargadas
   
   //Creació del botó de info sobre les cançons cargades y el total de cançons trobades
   if(!actualizar){
@@ -79,12 +80,10 @@ const renderitzarTracks = function(llistaTracks, total){
 
 
 
-
 const searchArtist = function(idArtist){
   console.log(idArtist);
-  buscarArtista(idArtist);
-  buscarTopSong();
-
+  buscarArtista(idArtist, tokenAcces);
+  buscarTopSong(idArtist, tokenAcces);
 }
 
 
@@ -189,21 +188,28 @@ const getSpotifyAccessToken = function (clientId, clientSecret) {
         if (llistaTracks.length > 0) {
           renderitzarTracks(llistaTracks, resultadosTotales);
         }
-
-        //renderitzarTracks(llistaTracks, resultadosTotales);
-
       })
       .catch((error) => {
-        console.error("Error al buscar cançons:", error);
+        console.error("No hi han resultats", error);
       });
   }
   
   btnBuscar.addEventListener("click", function(){
-    results.innerHTML = ""; 
-    resultadosCargados = 0; 
-    resultadosTotales = 0;
-    actualizar = false;
-    searchSpotifyTracks(inputSong.value,tokenAcces);
+
+    let inputValor = inputSong.value;
+
+    if (inputValor.length == 0 ){                             //Sino has introduit res, salta un alert
+      alert(`Has d'introduir un nom d’una cançó`);
+    } else if (inputValor.length < 2){                        //si nomès has introduit 1 sol caràcter saltará un alert
+      alert('Has d’introduir almenys 2 caràcters');
+
+    }else{
+      results.innerHTML = ""; 
+      resultadosCargados = 0; 
+      resultadosTotales = 0;
+      actualizar = false;
+      searchSpotifyTracks(inputSong.value,tokenAcces);
+    }
   });
   
 
@@ -233,17 +239,42 @@ const buscarArtista = function(idArtist, tokenAcces){
     .then((data) => {
       console.log(data)
      // Data retorna tota la informació de la consulta de l’API
-      
+      llistaTracks = data.tracks.items;
+      renderizarArtista(llistaTracks)
     })
     .catch((error) => {
       console.error("Error al buscar cançons:", error);
     });
 }
 
+
+
 /********************************************************************* ENDPOINT GET TOP TRACKS  **************************************************/
 
+const buscarTopSong = function(idArtist, tokenAcces){
+  const urlEndPointTopTracks = `https://api.spotify.com/v1/artists/${idArtist}/top-tracks`;
 
-// const url = `https://api.spotify.com/v1/artists/${artistId}/top-tracks`;
-// const header = {
-//    Authorization: `Bearer ${token}`,
-// };
+  // Al headers sempre s’ha de posar la mateixa informació.
+  fetch(urlEndPointTopTracks, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${tokenAcces}`,
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => {
+     // Controlem si la petició i la resposta han anat bé. 
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} - ${response.statusText}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data)
+     // Data retorna tota la informació de la consulta de l’API
+      
+    })
+    .catch((error) => {
+      console.error("Error al buscar cançons:", error);
+    });
+} 
