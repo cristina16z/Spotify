@@ -8,11 +8,29 @@ const inputSong = document.querySelector("#inputSong");
 const results = document.querySelector(".results");
 
 
+let resultadosCargados = 0;
+let resultadosTotales = 0;
+let actualizar = false;
+let quantitatSongs;
 
-const renderitzarTracks = function(llistaTracks){
-  results.textContent = "";
-  for(let i = 0; i < llistaTracks.length; i++){
-    console.log(llistaTracks[i].album.images[0].url);
+
+
+const renderitzarTracks = function(llistaTracks, total){
+  
+  // Limpia sólo el texto inicial
+  if (results.textContent === "Fes una nova búsqueda") {
+    results.textContent = ""; 
+  }
+
+
+  // Cogerá el min entre results cargados y total
+  // evitará acceder a índices superiores que no existen, es decir, que no supere el total de canciones que hay en total
+  const rangSongs = Math.min(resultadosCargados + 12, total);
+
+  //Creació dels diferents elements de cançons amb la seva imatge, nom, artista, album..
+  //Reneritzará les cancions partint de resultadosCargados hasta rangSongs 
+  for(let i = resultadosCargados; i < rangSongs;  i++){
+   
     const objDiv = document.createElement("div");
     objDiv.className="track";
     objDiv.addEventListener("click", function() {
@@ -22,14 +40,44 @@ const renderitzarTracks = function(llistaTracks){
                      <h1 class="track_name">${llistaTracks[i].name}</h1>
                      <div class="track_artista">Artista : ${llistaTracks[i].artists[0].name}</div>
                      <div class="track_album">Àlbum: ${llistaTracks[i].album.name}</div>
-                     <button class="track_add">+  Afegir Cançó</button`;
+                     <button class="track_add">+ Afegir Cançó</button`;
    
     results.appendChild(objDiv);
-
-    // let name = llistaTracks[i].name;
-    // console.log(name);
   }
-}
+
+  
+  resultadosCargados = rangSongs;                               //Actualizamos las canciones cargadas
+  
+  //Creació del botó de info sobre les cançons cargades y el total de cançons trobades
+  if(!actualizar){
+    
+    quantitatSongs = document.createElement("button");
+    quantitatSongs.className="quantitatSongs";
+    results.appendChild(quantitatSongs);
+
+    //Funcionalitat del botó de cargar més cançons
+    quantitatSongs.addEventListener("click", function () {
+      if (resultadosCargados < resultadosTotales) {               //si hay canciones que no se han cargado aún 
+        searchSpotifyTracks(inputSong.value, tokenAcces);
+      }
+    });
+
+    actualizar = true;                                            //Evitar recrear el botón de cargar canciones nuevamente
+
+  }else{
+    results.appendChild(quantitatSongs);                          //reposicionar el botón abajo
+  }
+
+
+  quantitatSongs.textContent = `+ Cançons (${resultadosCargados} de ${total})`;
+  if (resultadosCargados >= total) {                              //Si les carregades son més que el total, ya las hem carregat totes
+    quantitatSongs.disabled = true;
+    quantitatSongs.textContent = `+ Cançons (${resultadosCargados} de ${total})`;
+  }
+};
+
+
+
 
 
 const searchArtist = function(idArtist){
@@ -45,6 +93,9 @@ btnClear.addEventListener("click", function(){
   results.innerHTML = "";
   results.textContent = "Fes una nova búsqueda";
   inputSong.value = "";
+  resultadosCargados = 0;
+  resultadosTotales = 0;
+  actualizar = false;
 });
 
 
@@ -107,8 +158,8 @@ const getSpotifyAccessToken = function (clientId, clientSecret) {
     // Definim l’endpoint, la query és el valor de búsqueda.
     // Limitem la búsqueda a cançons i retornarà 12 resultats.
     const searchUrl =
-      `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=12`;
-  
+      `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=12&offset=${resultadosCargados}`;
+                          //limite 12 canciones y parte de los resultados ya cargados si se ha hecho previamente una búsqueda
   
     // Al headers sempre s’ha de posar la mateixa informació.
     fetch(searchUrl, {
@@ -128,10 +179,18 @@ const getSpotifyAccessToken = function (clientId, clientSecret) {
       .then((data) => {
         console.log(data)
        // Data retorna tota la informació de la consulta de l’API
-        llistaTracks = data.tracks.items;
-       //console.log(data);
+        if (resultadosCargados == 0){
+          llistaTracks = data.tracks.items;
+          resultadosTotales = data.tracks.total;
+        }else{
+          llistaTracks = [...llistaTracks, ...data.tracks.items]; // Acumula las nuevas canciones
+        }
 
-        renderitzarTracks(llistaTracks);
+        if (llistaTracks.length > 0) {
+          renderitzarTracks(llistaTracks, resultadosTotales);
+        }
+
+        //renderitzarTracks(llistaTracks, resultadosTotales);
 
       })
       .catch((error) => {
@@ -140,6 +199,10 @@ const getSpotifyAccessToken = function (clientId, clientSecret) {
   }
   
   btnBuscar.addEventListener("click", function(){
+    results.innerHTML = ""; 
+    resultadosCargados = 0; 
+    resultadosTotales = 0;
+    actualizar = false;
     searchSpotifyTracks(inputSong.value,tokenAcces);
   });
   
