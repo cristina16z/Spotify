@@ -3,7 +3,7 @@ body {
 }
 
 
-/* HEADER */
+/******************************************************************* HEADER ***************************************************************/
 
 .input{
     width: 16vw;    
@@ -51,7 +51,7 @@ h1{
 }
 
 
-/*PART ESQUERRA */
+/***************************************************************** PART ESQUERRA - TRACKS *****************************************************/
 .results{
     display: flex;
     flex-wrap: wrap;
@@ -116,13 +116,11 @@ h1{
 
 
 
-/*PART DRETA */
+/**************************************************************** PART DRETA - INFORMACIÓ ARTISTA ******************************************************/
 
 .informacio{
-    border-left: 1px solid black;
     width: 30vw;
     height: 100vh;
-    border-color: rgb(0, 0, 0);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -132,11 +130,31 @@ h1{
 .infoArtista{
     display: flex;
     justify-content: center;
-    border: 1px solid black;
-    width:90%;
-    height: 50vh; /*cambiarlo a auto*/
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    width: 90%;
+    height: 70vh;
     border-radius: 3%;
+    border: 1px solid black;
+    box-sizing: border-box;             /*el padding no afecte al tamaño*/
+    overflow: hidden;                   /*evita que el contenido sobresalga*/
+    padding: 5%; 
 }
+
+
+.track_img_profile{
+    width: 80%;
+    height: auto;
+    border-radius: 50%;
+    transform: scale(0.8); 
+}
+
+.track_popularity, .track_generes, .track_followers{
+    margin-bottom: 4%;
+    text-align: center;
+}
+
 
 .llista_titol{
     margin-top: 5%;

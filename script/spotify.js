@@ -15,6 +15,8 @@ let actualizar = false;
 let quantitatSongs;
 
 
+/************************************************************ Renderitzar Tracks ***************************************************************/
+
 
 const renderitzarTracks = function(llistaTracks, total){
   
@@ -78,6 +80,24 @@ const renderitzarTracks = function(llistaTracks, total){
 };
 
 
+/************************************************************ Renderitzar Artista ***************************************************************/
+
+const renderizarArtista =  function(data){
+  infoArtista.innerHTML = "";
+ 
+  const objDivArt = document.createElement("div");
+  //objDivArt .className="infoArtistaDades";
+  objDivArt.innerHTML=`<img src=${data.images[0].url} class="track_img_profile"/>
+                    <h1 class="track_name">${data.name}</h1>
+                    <div class="track_popularity"> Popularitat: ${data.popularity}</div>
+                    <div class="track_generes">Gèneres: ${data.genres}</div>
+                    <div class="track_followers">Seguidors: ${data.followers.total.toLocaleString('es-ES')}</div>`
+   
+    infoArtista.appendChild(objDivArt);
+};
+
+
+
 
 
 const searchArtist = function(idArtist){
@@ -91,6 +111,10 @@ const searchArtist = function(idArtist){
 btnClear.addEventListener("click", function(){
   results.innerHTML = "";
   results.textContent = "Fes una nova búsqueda";
+
+  infoArtista.innerHTML = "";
+  infoArtista.textContent = "Informació Artista"
+
   inputSong.value = "";
   resultadosCargados = 0;
   resultadosTotales = 0;
@@ -132,6 +156,7 @@ const getSpotifyAccessToken = function (clientId, clientSecret) {
         return response.json(); // Retorna la resposta com JSON
       })
       .then((data) => { //2nd then controla la informació del body, retorna la informació que vull mostrar per pantalla
+        console.log('Get Token');
         // Al data retorna el token d'accés que necessitarem
         // Haurem d’habilitar els botons “Buscar” i “Borrar”
         tokenAcces = data.access_token;  //rep el acces_token de spotify
@@ -176,6 +201,7 @@ const getSpotifyAccessToken = function (clientId, clientSecret) {
         return response.json();
       })
       .then((data) => {
+        console.log('Get Search');
         console.log(data)
        // Data retorna tota la informació de la consulta de l’API
         if (resultadosCargados == 0){
@@ -237,13 +263,12 @@ const buscarArtista = function(idArtist, tokenAcces){
       return response.json();
     })
     .then((data) => {
-      console.log(data)
+      console.log('Get artist');
      // Data retorna tota la informació de la consulta de l’API
-      llistaTracks = data.tracks.items;
-      renderizarArtista(llistaTracks)
+      renderizarArtista(data)
     })
     .catch((error) => {
-      console.error("Error al buscar cançons:", error);
+      console.error("Error al obtenir dades de l'artista:", error);
     });
 }
 
