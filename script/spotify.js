@@ -7,7 +7,7 @@ const btnClear = document.querySelector("#eliminar");
 const inputSong = document.querySelector("#inputSong");
 const results = document.querySelector(".results");
 const infoArtista = document.querySelector(".infoArtista");
-
+const infoLlista= document.querySelector(".infoLlista");
 
 let resultadosCargados = 0;
 let resultadosTotales = 0;
@@ -93,11 +93,22 @@ const renderizarArtista =  function(data){
                     <div class="track_generes">Gèneres: ${data.genres}</div>
                     <div class="track_followers">Seguidors: ${data.followers.total.toLocaleString('es-ES')}</div>`
    
-    infoArtista.appendChild(objDivArt);
+  infoArtista.appendChild(objDivArt);
 };
 
 
 
+/************************************************************ Renderitzar Top Tracks ***************************************************************/
+
+const renderizarTopTracks =  function(data){
+  infoLlista.innerHTML = "";
+  for (let i = 0; i < 3; i++) {
+    const objDivTopTrack = document.createElement("div");
+    objDivTopTrack.className="track_top";
+    objDivTopTrack.innerHTML=`<div> 1. ${data.tracks[i].name}</div>`
+    infoLlista.appendChild(objDivTopTrack );
+  }
+};
 
 
 const searchArtist = function(idArtist){
@@ -107,13 +118,17 @@ const searchArtist = function(idArtist){
 }
 
 
-/* Funció botón Borrar */
+/************************  Funció botón Borrar ******************/
+
 btnClear.addEventListener("click", function(){
   results.innerHTML = "";
   results.textContent = "Fes una nova búsqueda";
 
   infoArtista.innerHTML = "";
   infoArtista.textContent = "Informació Artista"
+
+  infoLlista.innerHTML = "";
+  infoLlista.textContent = "Informació Cançons";
 
   inputSong.value = "";
   resultadosCargados = 0;
@@ -295,11 +310,12 @@ const buscarTopSong = function(idArtist, tokenAcces){
       return response.json();
     })
     .then((data) => {
-      console.log(data)
+      console.log('Get Tracks');
      // Data retorna tota la informació de la consulta de l’API
+     renderizarTopTracks(data);
       
     })
     .catch((error) => {
-      console.error("Error al buscar cançons:", error);
+      console.error("Error al renderitzar Top Tracks", error);
     });
 } 

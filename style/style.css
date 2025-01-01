@@ -70,15 +70,18 @@ h1{
     display: block;                                 /*quita el posible espacio superior previo a la imágen*/
     width:20%;
     height: auto;
-
     background-color: white;
     border-radius: 3%;
     justify-content: center;
+    border: 2px solid transparent;                 /*le añado borde invisible inciialemtne,
+                                                    porque sino con el hover al añadirle el borde no se muevan se meuven los tracks
+                                                    por la ampliación de píxel por el borde,
+                                                    y esto lo evita ya que ya está creado incialmente*/
 }
 
 .track:hover{
     background-color: rgb(141, 224, 141);
-    border-color: black;
+    border:2px solid green;
 }
 
 
@@ -156,6 +159,8 @@ h1{
 }
 
 
+/***************************** Top Tracks *******************/
+
 .llista_titol{
     margin-top: 5%;
     font-weight: bold;
@@ -163,4 +168,8 @@ h1{
 
 .infoLlista{
     margin-top: 3%;
+}
+
+.track_top {
+    margin-bottom: 8%;
 }
