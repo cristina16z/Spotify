@@ -15,6 +15,8 @@ let actualizar = false;
 let quantitatSongs;
 
 
+
+
 /************************************************************ Renderitzar Tracks ***************************************************************/
 
 
@@ -42,9 +44,22 @@ const renderitzarTracks = function(llistaTracks, total){
     objDiv.innerHTML=`<img src=${llistaTracks[i].album.images[0].url} class="track_img"/>
                      <h1 class="track_name">${llistaTracks[i].name}</h1>
                      <div class="track_artista">Artista : ${llistaTracks[i].artists[0].name}</div>
-                     <div class="track_album">Àlbum: ${llistaTracks[i].album.name}</div>
-                     <button class="track_add">+ Afegir Cançó</button`;
-   
+                     <div class="track_album">Àlbum: ${llistaTracks[i].album.name}</div>`;
+
+    // Crear botó Afegir Cançó
+    const btnAddTrack = document.createElement("button");
+    btnAddTrack.className = "track_add";
+    btnAddTrack.textContent = "+ Afegir Cançó";
+
+    // Botó Afegir Cançó guardi el ID en el localStorage
+    btnAddTrack.addEventListener("click", function() {
+      console.log('afegir cançó en local storage:');
+      event.stopPropagation();                                 //Hace que se ejecute únicamente el guardarLocalStorage, evita la propagación, el evento del padre ObjDiv 
+      const id_track = (llistaTracks[i].id);
+      guardarLocalStorage(id_track);
+    });         
+
+    objDiv.appendChild(btnAddTrack);
     results.appendChild(objDiv);
   }
 
@@ -80,6 +95,28 @@ const renderitzarTracks = function(llistaTracks, total){
 };
 
 
+/*********************************************************** Local Storage *********************************************************************/
+
+
+const guardarLocalStorage = function(id_track) {
+  
+  //Inicialitza o recupera lo que tenía abans
+  let ids_localStorage = JSON.parse(localStorage.getItem("idTracks")) || { ids: [] };
+
+  //Evita ids tracks duplicats
+  if (!ids_localStorage.ids.includes(id_track)) {
+   ids_localStorage.ids.push(id_track);
+  }
+
+  //Guarda l'objecte actualitzat en el local Storage
+  localStorage.setItem("idTracks", JSON.stringify(ids_localStorage));
+  console.log("ids de cançons:",ids_localStorage.ids);                    //comprovació desde la consola
+
+};
+
+
+
+
 /************************************************************ Renderitzar Artista ***************************************************************/
 
 const renderizarArtista =  function(data){
@@ -105,7 +142,7 @@ const renderizarTopTracks =  function(data){
   for (let i = 0; i < 3; i++) {
     const objDivTopTrack = document.createElement("div");
     objDivTopTrack.className="track_top";
-    objDivTopTrack.innerHTML=`<div> 1. ${data.tracks[i].name}</div>`
+    objDivTopTrack.innerHTML=`<div> ${i + 1}. ${data.tracks[i].name}</div>`
     infoLlista.appendChild(objDivTopTrack );
   }
 };
@@ -118,7 +155,7 @@ const searchArtist = function(idArtist){
 }
 
 
-/************************  Funció botón Borrar ******************/
+/********************************************************  Funció botón Borrar *********************************************************************/
 
 btnClear.addEventListener("click", function(){
   results.innerHTML = "";
@@ -135,6 +172,14 @@ btnClear.addEventListener("click", function(){
   resultadosTotales = 0;
   actualizar = false;
 });
+
+
+
+
+
+
+
+
 
 
 

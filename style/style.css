@@ -118,6 +118,18 @@ h1{
 }
 
 
+/************ Botó de carregar més cançons ***********/
+
+.quantitatSongs{
+    background-color:rgb(40, 182, 40);
+    padding: .8%;
+    border-radius: 6%;
+    border: 1px solid green;
+}
+
+.quantitatSongs:hover{
+    background-color:rgb(110, 190, 110);
+}
 
 /**************************************************************** PART DRETA - INFORMACIÓ ARTISTA ******************************************************/
 
