@@ -54,7 +54,6 @@ const renderitzarTracks = function(llistaTracks, total){
     // Botó Afegir Cançó guardi el ID en el localStorage
     btnAddTrack.addEventListener("click", function() {
       console.log('afegir cançó en local storage:');
-      event.stopPropagation();                                 //Hace que se ejecute únicamente el guardarLocalStorage, evita la propagación, el evento del padre ObjDiv 
       const id_track = (llistaTracks[i].id);
       guardarLocalStorage(id_track);
     });         
