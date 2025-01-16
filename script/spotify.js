@@ -4,6 +4,7 @@ let tokenAcces="";
 let llistaTracks="";
 const btnBuscar = document.querySelector("#buscar");
 const btnClear = document.querySelector("#eliminar");
+
 const inputSong = document.querySelector("#inputSong");
 const results = document.querySelector(".results");
 const infoArtista = document.querySelector(".infoArtista");
@@ -221,6 +222,7 @@ const getSpotifyAccessToken = function (clientId, clientSecret) {
         tokenAcces = data.access_token;  //rep el acces_token de spotify
         btnBuscar.disabled = false;
         btnClear.disabled = false;
+        btnPlaylist.disabled = false;
       })
       .catch((error) => {
         // SI durant el fetch hi ha hagut algun error arribarem aquí.
@@ -363,3 +365,31 @@ const buscarTopSong = function(idArtist, tokenAcces){
       console.error("Error al renderitzar Top Tracks", error);
     });
 } 
+
+
+
+
+
+/*************************************************************************** PLAYLIST **********************************************************/
+
+
+
+const URL = "https://accounts.spotify.com/authorize";
+const redirectUri = "http://127.0.0.1:5501/playlist.html";
+const scopes ="playlist-modify-private user-library-modify playlist-modify-public";
+
+const btnPlaylist = document.querySelector("#playlist");
+
+btnPlaylist.addEventListener("click", ()=> autoritzar())
+
+const autoritzar = function () {
+  const authUrl =
+    URL +
+    `?client_id=${clientId}` +
+    `&response_type=token` +
+    `&redirect_uri=${redirectUri}` +
+    `&scope=${scopes}`;
+
+
+  window.location.assign(authUrl);
+};

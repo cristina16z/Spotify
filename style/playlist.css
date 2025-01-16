@@ -1,0 +1,31 @@
+body {
+    background-color: rgb(212, 244, 201);
+  /*  margin: 0;
+    padding: 0;*/
+}
+
+main{
+    display: flex;
+    justify-content: flex-start;
+}
+    
+
+.playlists, .canciones, .canciones_selecionadas{
+    border: 1px solid black;
+    width: 33%;
+    height: auto;
+    padding: 1.5%;
+
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.bttnSave{
+    width:8em;
+    padding: 1.2%;
+}
+
+h2{
+    font-weight: bold;
+}
