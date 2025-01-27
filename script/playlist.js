@@ -40,16 +40,16 @@ const getUser = async function () {
 
 const renderTracksSelected = function(tracks){
 
-    const obj_results = document.querySelector(".canciones_selecionadas");
+    const obj_canciones_selecionadas = document.querySelector(".canciones_selecionadas");
     
 
     for(let track of tracks.tracks){
-        const createTrack = document.createElement("div");
-        createTrack.className = "track_selected";
-        createTrack.innerHTML = ` <h2 class="track_name">${track.name} - ${track.artists[0].name}</h2>
+        const createTrack_selected = document.createElement("div");
+        createTrack_selected.className = "track_selected";
+        createTrack_selected.innerHTML = ` <h2 class="track track_name">${track.name} - ${track.artists[0].name}</h2>
                                     <button class="bttn bttn_add">ADD</button>
                                     <button class="bttn bttn_del">DEL</button> `;
-        obj_results.appendChild(createTrack);
+        obj_canciones_selecionadas.appendChild(createTrack_selected);
     }
 }
 
@@ -57,15 +57,14 @@ const renderTracksSelected = function(tracks){
 
 const renderTracks = function(idPlaylist){
 
-    const obj_results = document.querySelector(".canciones_playlist");
-    obj_results.innerHTML = "";
+    const obj_canciones_playlist = document.querySelector(".canciones_playlist");
 
     for(let track of tracks.tracks){
         const createTrack = document.createElement("div");
         createTrack.className = "track_playlist";
-        createTrack.innerHTML = ` <h2 class="track_playlist_name">${track.name} - ${track.artists[0].name}</h2>
-                                    <button class="bttn_del">DEL</button> `;
-        obj_results.appendChild(createTrack);
+        createTrack.innerHTML = ` <h2 class="track track_playlist_name">${track.name} - ${track.artists[0].name}</h2>
+                                    <button class="bttn bttn_del">DEL</button> `;
+        obj_canciones_playlist.appendChild(createTrack);
     }
 }
 
@@ -73,14 +72,13 @@ const renderTracks = function(idPlaylist){
 
 const renderPlaylist = function(dada){
 
-    const obj_results = document.querySelector(".playlists");
-    obj_results.innerHTML = "";
+    const obj_q_playlist = document.querySelector(".q_playlist"); 
 
     for(let item of dada.items){
-        const createTrack = document.createElement("div");
-        createTrack.className = "playlist";
-        createTrack.innerHTML = ` <h2 class="playlist_name"></h2>`;
-        obj_results.appendChild(createTrack);
+        const createPlaylist = document.createElement("div");
+        createPlaylist.className = "playlist";
+        createPlaylist.innerHTML = `<h2 class="track playlist_name">${dada.items[0].name}</h2>`;
+        obj_q_playlist.appendChild(createPlaylist);
     }
 }
 
@@ -109,6 +107,7 @@ const getPlayListByUser = async function(){
 
         if (data) {
             console.log(data);
+            renderPlaylist(data);
         } else {
             console.log("No hi ha ID de l'usuari");
         }
@@ -124,9 +123,9 @@ const getPlayList = function(){
 }
 
 
-const getIdtracksLocalStorage = function(){
-    return localStorage.getItem("idTracks");
-}
+
+
+/*************************************************** ENDPOINT CANÇONS DE LA PLAYLIST *********************************/
 
 
 const getTrack = async function(llistatracks){
@@ -154,7 +153,7 @@ const getTrack = async function(llistatracks){
         const tracks = await resposta.json();
         console.log(tracks);
         //mostrar la informació per pantalla
-        // renderTracks(tracks);
+        
     
     }catch (error){
         console.log(error);
@@ -165,6 +164,10 @@ const getTrack = async function(llistatracks){
 
 
 /************************************************ ENDPOINT DE LES CANÇONS SELECCIONADES DEL LOCALSTORAGE *******************/
+
+const getIdtracksLocalStorage = function(){
+    return localStorage.getItem("idTracks");
+}
 
 const getTrackSelected = async function(){
     let llistatracks = getIdtracksLocalStorage();
