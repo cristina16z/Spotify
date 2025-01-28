@@ -2,7 +2,7 @@
 const API_URL_SEVERAL_TRACKS = "https://api.spotify.com/v1/tracks";
 const accesToken = window.location.href.split("access_token=")[1];
 let idUser="";
-
+let id_playlist = "";
 
 const getUser = async function () {
     const urlMe = "https://api.spotify.com/v1/me";
@@ -36,6 +36,7 @@ const getUser = async function () {
 
 /********************************** FUNCIONS DE RENDERITZACIÓ ******************************************/
 
+//Renderització de les cançons seleccionades
 
 const renderTracksSelected = function(data){
 
@@ -80,6 +81,8 @@ const renderTracksSelected = function(data){
 
 
 
+//Renderització de les cançons de la playlist
+
 const renderTracks = function(idPlaylist){
 
     const obj_canciones_playlist = document.querySelector(".cancion_playlist");
@@ -97,7 +100,7 @@ const renderTracks = function(idPlaylist){
 
         // Funció del botó DEL
         bttnDel_trackPlaylist.addEventListener("click", function() {
-            deleteTrack_from_Playlist(idPlaylist);
+            deleteTrack_from_Playlist(id_playlist, item.track.id);  //enviamos el id_playlist y id_track para actualizar la lista de canciones
         });         
 
 
@@ -108,6 +111,8 @@ const renderTracks = function(idPlaylist){
 
 
 
+//Renderització de la playlist
+
 const renderPlaylist = function(dada){
 
     const obj_q_playlist = document.querySelector(".q_playlist"); 
@@ -116,8 +121,9 @@ const renderPlaylist = function(dada){
         const createPlaylist = document.createElement("div");
         createPlaylist.className = "playlist";
         createPlaylist.innerHTML = `<h2 class="track">${item.name}</h2>`;
-        createPlaylist.addEventListener("click", function() {                   /*guardamos el id de la playlist*/
-            getTrack(item.id); 
+        createPlaylist.addEventListener("click", function() {                
+            id_playlist = item.id;    //guardamos el id de la playlist para tenerlo en cuenta a la hora de borrar la cancion de dicha playlist
+            getTrack(id_playlist);      
         });
         obj_q_playlist.appendChild(createPlaylist);
     }
@@ -243,7 +249,7 @@ getTrackSelected();
 /*************************************************** CANÇONS DE LA PLAYLIST - BUTTON DEL *********************************/
 
 
-const deleteTrack_from_Playlist = async function(id_playList) {
+const deleteTrack_from_Playlist = async function(id_playList, id_track) {
      //La variable selectedPlayList és la playlist que hem seleccionem
     const url = `https://api.spotify.com/v1/playlists/${id_playList}/tracks`;
 
@@ -258,7 +264,7 @@ const deleteTrack_from_Playlist = async function(id_playList) {
                 Authorization: `Bearer ${accesToken}`
             },
             body: JSON.stringify({
-                tracks: [{ uri:trackUri }] // Afegir la URIs que volem eliminar
+                tracks: [{ uri:`spotify:track:${id_track}` }] // Afegir la URIs que volem eliminar
             })
         });
 
@@ -266,8 +272,8 @@ const deleteTrack_from_Playlist = async function(id_playList) {
         if (!response.ok) {
             throw new Error(`Error ${response.status}: ${response.statusText}`);
         }
-         // Actualizar la lista de canciones
-         getTrack(id_playList);
+        // Actualizamos la lista de canciones de la playlist
+        getTrack(id_playList);
 
     } catch (error) {
         console.error("Error al eliminar la canción de la playlist:", error);
