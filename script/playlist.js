@@ -57,7 +57,7 @@ const renderTracksSelected = function(data){
         // Funció del botó ADD
         bttnAdd_track.addEventListener("click", function() {
             console.log('Afegir cançó seleccionada');
-            addTrack_selected();
+            addTrack_selected(id_playlist, track);
         }); 
 
 
@@ -320,9 +320,16 @@ const deleteTrack_selected= async function(id_track) {
 
 /******************************************************** CANÇONS SELECCIONADES - BUTTON ADD ****************************************************/
 
-const addTrack_selected= async function(id_playList) {
-    //La variable selectedPlayList és la playlist que hem seleccionem
-    const url = `https://api.spotify.com/v1/playlists/${selectedPlayList}/tracks`;
+const addTrack_selected= async function(id_playList, track) {
+
+    //Verificación de si se ha seleccionado una playlist previament
+    if (!id_playList) {
+        alert("Has de seleccionar una playlist abans d'afegir una cançó.");
+        return;
+    }
+
+
+    const url = `https://api.spotify.com/v1/playlists/${id_playList}/tracks`;
 
     const confirmAdd= confirm("Estàs segur que vols afegir la cançó a la playlist?");
     if (!confirmAdd) return; 
@@ -334,7 +341,7 @@ const addTrack_selected= async function(id_playList) {
                 Authorization: `Bearer ${accesToken}`,
             },
             body: JSON.stringify({
-                uris: [trackUri], // Afegir la llista de URIs que volem afegir
+                uris: [track.uri],
             }),
         });
 
@@ -342,8 +349,13 @@ const addTrack_selected= async function(id_playList) {
             throw new Error(`Error ${response.status}: ${response.statusText}`);
         }
 
-        // Actualizar canciones seleccionadas
-        getTrackSelected(id_playList);
+        alert("La cançó s'ha afegit correctament a la playlist!");
+
+        // Eliminar la canción de canciones seleccionadas
+        deleteTrack_selected(track.id);
+
+        // Actualizar canciones de la playlist
+        getTrack(id_playList);
 
 
     } catch (error) {
