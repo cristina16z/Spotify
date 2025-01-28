@@ -40,13 +40,40 @@ const getUser = async function () {
 const renderTracksSelected = function(data){
 
     const obj_canciones_selecionadas = document.querySelector(".canciones_selecionadas");
+    /*obj_canciones_selecionadas.innerHTML = ""; */
     
     for(let track of data.tracks){
         const createTrack_selected = document.createElement("div");
         createTrack_selected.className = "track_selected";
-        createTrack_selected.innerHTML = ` <h2 class="track ">${track.name} - ${track.artists[0].name}</h2>
-                                    <button class="bttn bttn_add">ADD</button>
-                                    <button class="bttn bttn_del">DEL</button> `;
+        createTrack_selected.innerHTML = ` <h2 class="track ">${track.name} - ${track.artists[0].name}</h2>`;
+
+
+        // Creació botó ADD
+        const bttnAdd_track = document.createElement("button");
+        bttnAdd_track.className = "bttn bttn_add track_add";
+        bttnAdd_track.textContent = "ADD";
+
+        // Funció del botó ADD
+        bttnAdd_track.addEventListener("click", function() {
+            console.log('Afegir cançó seleccionada');
+            addTrack_selected();
+        }); 
+
+
+        // Creació botó DEL
+        const bttnDel_track = document.createElement("button");
+        bttnDel_track.className = "bttn bttn_del track_del";
+        bttnDel_track.textContent = "DEL";
+
+        // Funció del botó DEL
+        bttnDel_track.addEventListener("click", function() {
+            console.log('Eliminar cançó seleccionada');
+            deleteTrack_selected();
+        }); 
+        
+
+        createTrack_selected.appendChild(bttnAdd_track);
+        createTrack_selected.appendChild(bttnDel_track);
         obj_canciones_selecionadas.appendChild(createTrack_selected);
     }
 }
@@ -61,8 +88,20 @@ const renderTracks = function(idPlaylist){
     for(let item of idPlaylist.items){
         const createTrack = document.createElement("div");
         createTrack.className = "track_playlist";
-        createTrack.innerHTML = ` <h2 class="track ">${item.track.name} - ${item.track.artists[0].name} - ${item.added_at}</h2>
-                                    <button class="bttn bttn_del">DEL</button> `;
+        createTrack.innerHTML = `<h2 class="track ">${item.track.name} - ${item.track.artists[0].name} - ${item.added_at}</h2>`;
+
+        // Creació botó DEL
+        const bttnDel_trackPlaylist = document.createElement("button");
+        bttnDel_trackPlaylist.className = "bttn bttn_del track_playlist_del";
+        bttnDel_trackPlaylist.textContent = "DEL";
+
+        // Funció del botó DEL
+        bttnDel_trackPlaylist.addEventListener("click", function() {
+            deleteTrack_from_Playlist(idPlaylist);
+        });         
+
+
+        createTrack.appendChild(bttnDel_trackPlaylist);
         obj_canciones_playlist.appendChild(createTrack);    
     }
 }
@@ -198,10 +237,120 @@ const getTrackSelected = async function(){
 
 
 
-
-
-
-
 getPlayList();
 getTrackSelected();
 
+/*************************************************** CANÇONS DE LA PLAYLIST - BUTTON DEL *********************************/
+
+
+const deleteTrack_from_Playlist = async function(id_playList) {
+     //La variable selectedPlayList és la playlist que hem seleccionem
+    const url = `https://api.spotify.com/v1/playlists/${id_playList}/tracks`;
+
+    const confirmDelete_trackPlaylist = confirm("Estàs segur que vols eliminar la cançó de la playlist?");
+    if (!confirmDelete_trackPlaylist) return; 
+
+    try{
+        // Realizar la solicitud a la API
+        const response = await fetch(url, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${accesToken}`
+            },
+            body: JSON.stringify({
+                tracks: [{ uri:trackUri }] // Afegir la URIs que volem eliminar
+            })
+        });
+
+
+        if (!response.ok) {
+            throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+         // Actualizar la lista de canciones
+         getTrack(id_playList);
+
+    } catch (error) {
+        console.error("Error al eliminar la canción de la playlist:", error);
+    }
+};
+
+
+
+/*************************************************** CANÇONS SELECCIONADES - BUTTON DEL *********************************/
+
+
+const deleteTrack_selected= async function(id_playList) {
+    //La variable selectedPlayList és la playlist que hem seleccionem
+   const url = `https://api.spotify.com/v1/playlists/${id_playList}/tracks`;
+
+   const confirmDelete_track = confirm("Estàs segur que vols eliminar la cançó de la llista de cançons guardades?");
+   if (!confirmDelete_track) return; 
+
+   try{
+       // Realizar la solicitud a la API
+       const response = await fetch(url, {
+           method: "DELETE",
+           headers: {
+               Authorization: `Bearer ${accesToken}`
+           },
+           body: JSON.stringify({
+               tracks: [{ uri:trackUri }] // Afegir la URIs que volem eliminar
+           })
+       });
+
+
+       if (!response.ok) {
+           throw new Error(`Error ${response.status}: ${response.statusText}`);
+       }
+        // Actualizar canciones seleccionadas
+        getTrackSelected(id_playList);
+
+   } catch (error) {
+       console.error("Error al eliminar la canción seleccionada:", error);
+   }
+};
+
+
+/******************************************************** CANÇONS SELECCIONADES - BUTTON ADD ****************************************************/
+
+const addTrack_selected= async function(id_playList) {
+    //La variable selectedPlayList és la playlist que hem seleccionem
+    const url = `https://api.spotify.com/v1/playlists/${selectedPlayList}/tracks`;
+
+    const confirmAdd= confirm("Estàs segur que vols afegir la cançó a la playlist?");
+    if (!confirmAdd) return; 
+    
+    try{
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${accesToken}`,
+            },
+            body: JSON.stringify({
+                uris: [trackUri], // Afegir la llista de URIs que volem afegir
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+
+        // Actualizar canciones seleccionadas
+        getTrackSelected(id_playList);
+
+
+    } catch (error) {
+        console.error("Error al añadir la canción seleccionada:", error);
+    }
+};
+ 
+
+/*************** BUTTON TORNAR ENRERE ***************/
+
+const btnBack = document.querySelector(".bttn_back");
+
+btnBack.addEventListener("click", ()=> back())
+
+const back = function () {
+    window.history.back();
+};
