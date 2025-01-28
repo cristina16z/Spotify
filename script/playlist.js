@@ -40,8 +40,8 @@ const getUser = async function () {
 
 const renderTracksSelected = function(data){
 
-    const obj_canciones_selecionadas = document.querySelector(".canciones_selecionadas");
-    /*obj_canciones_selecionadas.innerHTML = ""; */
+    const obj_canciones_selecionadas = document.querySelector(".cancion_seleccionada");
+    obj_canciones_selecionadas.innerHTML = "";  //Limpiamos para que se actualice correctamente con la nueva array de canciones
     
     for(let track of data.tracks){
         const createTrack_selected = document.createElement("div");
@@ -69,7 +69,7 @@ const renderTracksSelected = function(data){
         // Funció del botó DEL
         bttnDel_track.addEventListener("click", function() {
             console.log('Eliminar cançó seleccionada');
-            deleteTrack_selected();
+            deleteTrack_selected(track.id);
         }); 
         
 
@@ -246,6 +246,8 @@ const getTrackSelected = async function(){
 getPlayList();
 getTrackSelected();
 
+
+
 /*************************************************** CANÇONS DE LA PLAYLIST - BUTTON DEL *********************************/
 
 
@@ -285,35 +287,34 @@ const deleteTrack_from_Playlist = async function(id_playList, id_track) {
 /*************************************************** CANÇONS SELECCIONADES - BUTTON DEL *********************************/
 
 
-const deleteTrack_selected= async function(id_playList) {
-    //La variable selectedPlayList és la playlist que hem seleccionem
-   const url = `https://api.spotify.com/v1/playlists/${id_playList}/tracks`;
-
+const deleteTrack_selected= async function(id_track) {
+   
    const confirmDelete_track = confirm("Estàs segur que vols eliminar la cançó de la llista de cançons guardades?");
    if (!confirmDelete_track) return; 
 
-   try{
-       // Realizar la solicitud a la API
-       const response = await fetch(url, {
-           method: "DELETE",
-           headers: {
-               Authorization: `Bearer ${accesToken}`
-           },
-           body: JSON.stringify({
-               tracks: [{ uri:trackUri }] // Afegir la URIs que volem eliminar
-           })
-       });
 
+   let llistatracks = getIdtracksLocalStorage();
+   if (!llistatracks) {
+        console.error("No hay canciones seleccionadas.");
+        return;
+    }
 
-       if (!response.ok) {
-           throw new Error(`Error ${response.status}: ${response.statusText}`);
-       }
-        // Actualizar canciones seleccionadas
-        getTrackSelected(id_playList);
+   let llistatracksJSON = JSON.parse(llistatracks);
 
-   } catch (error) {
-       console.error("Error al eliminar la canción seleccionada:", error);
-   }
+    // Rehacemos el nuevo array pero sin la que queremos borrar
+    let actualizarLista = [];
+    for (let i = 0; i < llistatracksJSON.ids.length; i++) {
+        if (llistatracksJSON.ids[i] !== id_track) {
+            actualizarLista.push(llistatracksJSON.ids[i]); // Sólo agrega las id_tracks que no coincidn con la seleccionada que queremos eliminar
+        }
+    }
+
+    llistatracksJSON.ids = actualizarLista
+
+    // Guardamos la nueva lista en el LocalStorage
+    localStorage.setItem("idTracks", JSON.stringify(llistatracksJSON));
+
+    getTrackSelected();
 };
 
 
