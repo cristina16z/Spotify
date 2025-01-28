@@ -2,7 +2,6 @@
 const API_URL_SEVERAL_TRACKS = "https://api.spotify.com/v1/tracks";
 const accesToken = window.location.href.split("access_token=")[1];
 let idUser="";
-console.log(accesToken);
 
 
 const getUser = async function () {
@@ -38,15 +37,14 @@ const getUser = async function () {
 /********************************** FUNCIONS DE RENDERITZACIÓ ******************************************/
 
 
-const renderTracksSelected = function(tracks){
+const renderTracksSelected = function(data){
 
     const obj_canciones_selecionadas = document.querySelector(".canciones_selecionadas");
     
-
-    for(let track of tracks.tracks){
+    for(let track of data.tracks){
         const createTrack_selected = document.createElement("div");
         createTrack_selected.className = "track_selected";
-        createTrack_selected.innerHTML = ` <h2 class="track track_name">${track.name} - ${track.artists[0].name}</h2>
+        createTrack_selected.innerHTML = ` <h2 class="track ">${track.name} - ${track.artists[0].name}</h2>
                                     <button class="bttn bttn_add">ADD</button>
                                     <button class="bttn bttn_del">DEL</button> `;
         obj_canciones_selecionadas.appendChild(createTrack_selected);
@@ -57,14 +55,15 @@ const renderTracksSelected = function(tracks){
 
 const renderTracks = function(idPlaylist){
 
-    const obj_canciones_playlist = document.querySelector(".canciones_playlist");
+    const obj_canciones_playlist = document.querySelector(".cancion_playlist");
+    obj_canciones_playlist.innerHTML = "";
 
-    for(let track of tracks.tracks){
+    for(let item of idPlaylist.items){
         const createTrack = document.createElement("div");
         createTrack.className = "track_playlist";
-        createTrack.innerHTML = ` <h2 class="track track_playlist_name">${track.name} - ${track.artists[0].name}</h2>
+        createTrack.innerHTML = ` <h2 class="track ">${item.track.name} - ${item.track.artists[0].name} - ${item.added_at}</h2>
                                     <button class="bttn bttn_del">DEL</button> `;
-        obj_canciones_playlist.appendChild(createTrack);
+        obj_canciones_playlist.appendChild(createTrack);    
     }
 }
 
@@ -77,7 +76,10 @@ const renderPlaylist = function(dada){
     for(let item of dada.items){
         const createPlaylist = document.createElement("div");
         createPlaylist.className = "playlist";
-        createPlaylist.innerHTML = `<h2 class="track playlist_name">${dada.items[0].name}</h2>`;
+        createPlaylist.innerHTML = `<h2 class="track">${item.name}</h2>`;
+        createPlaylist.addEventListener("click", function() {                   /*guardamos el id de la playlist*/
+            getTrack(item.id); 
+        });
         obj_q_playlist.appendChild(createPlaylist);
     }
 }
@@ -88,8 +90,7 @@ const renderPlaylist = function(dada){
 
 const getPlayListByUser = async function(){
     const url = `https://api.spotify.com/v1/users/${idUser}/playlists`;
-    console.log(url);
-
+    
     try {
         const response = await fetch(url, {
             method: "GET",
@@ -103,9 +104,9 @@ const getPlayListByUser = async function(){
         }
     
         const data = await response.json();
-  
 
         if (data) {
+            console.log("OBJECT ENDPOINT PLAYLIST DE L'USUARI");
             console.log(data);
             renderPlaylist(data);
         } else {
@@ -115,6 +116,7 @@ const getPlayListByUser = async function(){
       console.error("Error en obtenir l'usuari:", error);
     }
 }
+
 
 const getPlayList = function(){
     getUser().then(function(){
@@ -128,10 +130,8 @@ const getPlayList = function(){
 /*************************************************** ENDPOINT CANÇONS DE LA PLAYLIST *********************************/
 
 
-const getTrack = async function(llistatracks){
-    const urlEndpoint = `${API_URL_SEVERAL_TRACKS}?ids=${llistatracks}`;
-    console.log("url get Track  " + urlEndpoint);
-    //cridar la api
+const getTrack = async function(idPlaylist){
+    const urlEndpoint = `https://api.spotify.com/v1/playlists/${idPlaylist}/tracks`;
 
     try{
         const resposta = await fetch(urlEndpoint, 
@@ -141,7 +141,6 @@ const getTrack = async function(llistatracks){
                 Authorization: `Bearer ${accesToken }`,
               }
             }
-      
         );
 
          //tractar la resposta
@@ -150,16 +149,16 @@ const getTrack = async function(llistatracks){
         }
 
         //consultar la informació
-        const tracks = await resposta.json();
-        console.log(tracks);
-        //mostrar la informació per pantalla
+        const data = await resposta.json();
+        console.log("OBJECT ENDPOINT CANÇONS DE LA PLAYLIST");
+        console.log(data);
         
+        //mostrar la informació per pantalla
+        renderTracks(data);
     
     }catch (error){
         console.log(error);
     }
-   
-
 }
 
 
@@ -172,8 +171,6 @@ const getIdtracksLocalStorage = function(){
 const getTrackSelected = async function(){
     let llistatracks = getIdtracksLocalStorage();
     let llistatracksJSON = JSON.parse(llistatracks);
-    console.log("get track selected " + llistatracksJSON.ids.join(","));
-    //llistatracks = llistatracks.replaceAll(";", ",")
     let trackIds = llistatracksJSON.ids.join(",");
 
     const url2 = `${API_URL_SEVERAL_TRACKS}?ids=${trackIds}`;
@@ -191,6 +188,7 @@ const getTrackSelected = async function(){
         }
 
         const tracks = await response.json();
+        console.log("OBJECT ENDPOINT DE LES CANÇONS SELECCIONADES DEL LOCALSTORAGE");
         console.log(tracks);
         renderTracksSelected(tracks);
     } catch (error) {
@@ -201,8 +199,9 @@ const getTrackSelected = async function(){
 
 
 
-console.log('inici del programa');
+
+
+
 getPlayList();
-console.log('meitat del programa');
 getTrackSelected();
-console.log('final del programa');
+
