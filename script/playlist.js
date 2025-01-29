@@ -4,6 +4,11 @@ const accesToken = window.location.href.split("access_token=")[1];
 let idUser="";
 let id_playlist = "";
 
+const q_playlist = document.querySelector(".q_playlist");
+const namePlaylist = document.querySelector("#namePlaylist");
+const bttnSave = document.querySelector(".bttnSave");
+
+
 const getUser = async function () {
     const urlMe = "https://api.spotify.com/v1/me";
     
@@ -115,17 +120,18 @@ const renderTracks = function(idPlaylist){
 
 const renderPlaylist = function(dada){
 
-    const obj_q_playlist = document.querySelector(".q_playlist"); 
+    q_playlist.innerHTML = "";
 
     for(let item of dada.items){
         const createPlaylist = document.createElement("div");
         createPlaylist.className = "playlist";
-        createPlaylist.innerHTML = `<h2 class="track">${item.name}</h2>`;
-        createPlaylist.addEventListener("click", function() {                
-            id_playlist = item.id;    //guardamos el id de la playlist para tenerlo en cuenta a la hora de borrar la cancion de dicha playlist
+        createPlaylist.innerHTML = `<h2 class="track track_playlist_name">${item.name}</h2>`;
+        createPlaylist.addEventListener("click", function() {    
+            id_playlist = item.id;  //guardamos el id de la playlist para tenerlo en cuenta a la hora de borrar la cancion de dicha playlist y el input
+            playlist_seleccionada(item.name, id_playlist);
             getTrack(id_playlist);      
         });
-        obj_q_playlist.appendChild(createPlaylist);
+        q_playlist.appendChild(createPlaylist);
     }
 }
 
@@ -320,7 +326,7 @@ const deleteTrack_selected= async function(id_track) {
 
 /******************************************************** CANÇONS SELECCIONADES - BUTTON ADD ****************************************************/
 
-const addTrack_selected= async function(id_playList, track) {
+const addTrack_selected = async function(id_playList, track) {
 
     //Verificación de si se ha seleccionado una playlist previament
     if (!id_playList) {
@@ -364,6 +370,65 @@ const addTrack_selected= async function(id_playList, track) {
 };
  
 
+/******************************************** INPUT CANVIAR NOM DE LA PLAYLIST  ************************************/
+
+// Función para actualizar el nombre de la playlist en la interfaz después de editar
+const render_update_namePlaylist = function (id_playlist, new_name) {
+    const playlistE = document.querySelectorAll(".playlist");
+    for (let playlist of playlistE) {
+        if (playlist.dataset.id === id_playlist) {
+            playlist.querySelector(".track_playlist_name").textContent = new_name;
+            break; 
+        }
+    }
+    // Actualizamos las playlists
+    getPlayList();
+};
+
+
+// Función para seleccionar la playlist y mostrar su nombre en el input
+const playlist_seleccionada = function (name, idPlaylist) {
+    namePlaylist.value = name; 
+    id_playlist = idPlaylist;
+
+};
+
+
+// Función para modificar el nombre de la playlist en la API de Spotify
+const update_playlist_name = async function () {
+
+    const confirmUpdate = confirm("Estàs segur que vols modificar el nom de la playlist?");
+    if (!confirmUpdate) return;
+
+    const url = `https://api.spotify.com/v1/playlists/${id_playlist}`;
+
+    try {
+        const response = await fetch(url, {
+            method: "PUT",
+            headers: {
+                Authorization: `Bearer ${accesToken}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ name: namePlaylist.value }),
+        });
+
+        if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+
+        alert("El nom de la playlist s'ha modificat correctament!");
+        
+        // Actualizar la interfaz con el nuevo nombre
+       render_update_namePlaylist(id_playlist, namePlaylist.value);
+       getPlayListByUser();
+    } catch (error) {
+        console.error("Error al modificar el nom de la playlist:", error);
+    }
+};
+
+
+bttnSave.addEventListener("click", update_playlist_name);
+
+
+
 /*************** BUTTON TORNAR ENRERE ***************/
 
 const btnBack = document.querySelector(".bttn_back");
@@ -371,5 +436,5 @@ const btnBack = document.querySelector(".bttn_back");
 btnBack.addEventListener("click", ()=> back())
 
 const back = function () {
-    window.history.back();
+    window.location.href = "index.html";
 };

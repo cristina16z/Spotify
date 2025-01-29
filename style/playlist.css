@@ -1,9 +1,9 @@
 body {
     background-color: rgb(212, 244, 201);
-  /*  margin: 0;
-    padding: 0;*/
     font-family: sans-serif;
 }
+
+/*********************** Button Tornar *******************************/
 .bttn_back{
     width: 6vw;    
     height: 3.5vh;
@@ -15,34 +15,25 @@ body {
 .bttn_back:hover{
     background-color: rgb(85, 124, 99);
 }
+
 main{
     display: flex;
     justify-content: flex-start;
+    gap:.1%;
 }
+
+/************************** Input + Save *****************************/
 .form{
     display: flex;
     align-items: center;
+    margin-top: 5%;
 }
+
 .input{
     width: 12vw;    
     height: 3vh;
     font-size: 1.2em;
     margin-right: .5%;
-}
-    
-/*Cada columna*/
-.playlists, .canciones_playlist, .canciones_selecionadas{
-    border: 1px solid black;
-   
-    background-color: rgb(131, 196, 143);
-    width: 33%;
-    height: auto;
-    padding: 1.5%;
-
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    
 }
 
 .bttnSave{
@@ -50,18 +41,28 @@ main{
     padding: 1.2%;
     height:3.4vh;
 }
-
-h1{
-    font-weight: bold;
     
+/*************************** Cada columna ****************************/
+h1{
+    font-weight: bold;    
 }
 
-/*La informació a motrar de cada columna*/
+.playlists, .canciones_playlist, .canciones_selecionadas{
+    border: 1px solid black;
+    background-color: rgb(131, 196, 143);
+    width: 33%;
+    height: auto;
+    padding: 1.5%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    border-radius: 2%;
+}
+
+/*********** La informació a motrar de cada columna ******************/
 .playlist, .track_playlist, .track_selected{
     background-color:rgb(28, 56, 2);
     margin-bottom: 2%;    
-    /*border-radius: 3%; */
-   
     width: auto;
     height: auto;
     display: flex;
@@ -71,10 +72,11 @@ h1{
     align-items: center;
 }
 
-/*organització entre pista y botó*/
+/***************** organització entre pista y botó *****************/
 .track, .bttn{
     margin-left: 1.5%;
 }
+
 .bttn_del{
     margin-right: 1.5%;
 }
@@ -83,6 +85,7 @@ h1{
     width: 3vw;   
     height: 3vh;
 }
+
 .bttn:hover{
     background-color:rgb(113, 223, 103);
 }
